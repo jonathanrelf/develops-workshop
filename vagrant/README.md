@@ -15,17 +15,15 @@ In this section you will use Vagrant to spin up a test server on your local deve
 1. Execute the command  
         
         vagrant init
-1. If successful, the following message will be displayed:  
+1. If successful, the following message will be displayed: 
 
         A `Vagrantfile` has been placed in this directory. You are now ready to `vagrant up` your first virtual environment! Please read the comments in the Vagrantfile as well as documentation on `vagrantup.com` for more information on using Vagrant.
 1. Open the Vagrantfile in your favourite text editor
 1. Amend the config.vagrant.box variable.
-    - if using the Packer image we built in the previous workshop example use:  
-
-            config.vm.box = "../packer/ubuntu.box"
-    - if you'd rather use a pre-built image from the internet, you can specify Ubuntu 16.04 LTS (found on  https://app.vagrantup.com/boxes/search) by using: 
+    - to use a pre-built image from the internet, you can specify Ubuntu 16.04 LTS (found on  https://app.vagrantup.com/boxes/search) by using: 
 
             config.vm.box = "ubuntu/xenial64"
+            
     This will import either box definition in to Vagrant for use in the future.
 1. It's now time to spin up your box by typing:  
 
@@ -71,10 +69,25 @@ In this section you will use Vagrant to spin up a test server on your local deve
     and then running the command
 
         netstat -an | grep 80
-    which will show it LISTENing however from outside of the virtual machine we cannot browse to it.
-1. To map the *guest* port to the *host* machine, uncomment the line:  
+    which will show it LISTENing however from outside of the virtual machine we cannot currently browse to it if you try to access it.
+1. We have to map a *guest* port to one on the the *host* machine. In the Vagrantfile, uncomment the line:  
 
         config.vm.network "forwarded_port", guest: 80, host: 8080
-    and save the file. 
-1. As this is a change to how the virtual machine is hosted, you will need to *destroy* and *up* again using vagrant to map the ports. 
+    and save it. 
+1. As this is a change to how the virtual machine is hosted, you will need to
+
+        vagrant destroy
+        vagrant up
+    to map the ports. 
 1. You should now be able to browse to http://localhost:8080 on your local development machine and see the default Ubuntu webpage. 
+
+## Additional homework
+When Vagrant spins up a machine image it creates a file share from the current working directory and mounts it inside the virtual machine at /vagrant. 
+
+Using more Shell provisioner commands, how could you change the default Apache homepage to something different?
+
+## Chaining Packer with Vagrant
+You could make use of the machine image created in the Packer workshop (available in the packer directory in this Git repository).
+You would change the box name to use the local ubuntu.box file it creates. E.g.
+        
+        config.vm.box = "../packer/ubuntu.box"
